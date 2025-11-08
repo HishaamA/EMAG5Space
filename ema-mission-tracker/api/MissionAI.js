@@ -48,6 +48,68 @@ Your task:
 Respond ONLY with a valid JSON object in exactly this format (no additional text):
 {"risk_level": "Critical" or "High" or "Medium" or "Low", "primary_concern": "Brief description of main risk", "time_to_critical": "e.g., '15 minutes' or 'N/A'", "recommendation": "Specific action to take"}`;
 
+    case 'image_analysis':
+      return `You are an expert astrogeologist analyzing images from the EMA lander on Asteroid 269 Justitia, a large M-type asteroid in the main asteroid belt.
+
+Image Context: ${telemetry.description}
+Location: ${telemetry.location} (${telemetry.coordinates})
+Visual Features: ${telemetry.imagePrompt}
+
+As an astrogeologist, provide a detailed analysis covering:
+1. Key geological features visible in this terrain
+2. What these features tell us about the asteroid's formation and history
+3. Potential scientific significance of this location
+4. Recommendations for follow-up observations or sample collection
+
+Keep your analysis professional, scientifically rigorous, and concise (3-4 paragraphs).`;
+
+    case 'data_analysis':
+      return `You are a space mission scientist analyzing data from the EMA lander on Asteroid 269 Justitia.
+
+Sample Information:
+- Sample ID: ${telemetry.sampleId}
+- Location: ${telemetry.location}
+- Data Type: ${telemetry.type}
+- Measurements: ${JSON.stringify(telemetry.data)}
+- Unit: ${telemetry.unit}
+
+Analyze this data and provide:
+1. What these measurements reveal about the asteroid's composition/properties
+2. Is this a significant or unusual finding? Why?
+3. How does this compare to expected values for M-type asteroids?
+4. What implications does this have for asteroid mining or planetary science?
+
+Provide a clear, scientifically accurate analysis (2-3 paragraphs).`;
+
+    case 'landing_site_analysis':
+      return `You are a mission engineer analyzing landing sites for the Justitia Landing Mission on Asteroid 269 Justitia.
+
+The user has selected: ${telemetry.name}
+Location: ${telemetry.coordinates}
+
+Site Characteristics:
+- Terrain: ${telemetry.characteristics.terrain}
+- Slope: ${telemetry.slope}
+- Difficulty: ${telemetry.difficulty}
+- Scientific Interest: ${telemetry.scientificInterest}
+- Geology: ${telemetry.characteristics.geology}
+- Resources: ${telemetry.characteristics.resources}
+- Hazards: ${telemetry.characteristics.hazards}
+- Opportunities: ${telemetry.characteristics.opportunities}
+- Accessibility: ${telemetry.characteristics.accessibility}
+- Solar Exposure: ${telemetry.characteristics.solarExposure}
+- Communication: ${telemetry.characteristics.communication}
+
+As a mission engineer, provide a comprehensive landing site analysis covering:
+
+**RISKS**: Analyze the landing hazards and operational challenges at this site. Consider terrain difficulty, slope angle, surface stability, and mission safety.
+
+**BENEFITS**: Evaluate the scientific value and operational advantages. What makes this site worth considering despite the risks?
+
+**RECOMMENDATION**: Should the mission proceed with this site, proceed with extra caution, or select an alternative? Provide your expert recommendation with reasoning.
+
+Keep your analysis professional and actionable (2-3 paragraphs). Focus on practical mission planning considerations.`;
+
     default:
       return 'Invalid prompt type';
   }
@@ -101,6 +163,9 @@ export const getAIAnalysis = async (promptType, telemetryData, telemetryHistory 
 
     // Parse based on prompt type
     if (promptType === 'status_update') {
+      return { responseText: responseText.trim() };
+    } else if (promptType === 'image_analysis' || promptType === 'data_analysis' || promptType === 'landing_site_analysis') {
+      // Return plain text analysis for science data and landing sites
       return { responseText: responseText.trim() };
     } else if (promptType === 'anomaly_detection' || promptType === 'risk_assessment') {
       // Try to parse JSON from the response

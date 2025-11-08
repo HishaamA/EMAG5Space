@@ -10,6 +10,9 @@ import { TouchableOpacity } from 'react-native';
 import DashboardScreen from './screens/DashboardScreen';
 import ModelViewerScreen from './screens/ModelViewerScreen';
 import TimelineScreen from './screens/TimelineScreen';
+import SpaceEducationScreen from './screens/SpaceEducationScreen';
+import ScienceAnalysisScreen from './screens/ScienceAnalysisScreen';
+import LandingSiteScreen from './screens/LandingSiteScreen';
 
 // Import styles
 import { colors } from './styles/GlobalStyles';
@@ -28,6 +31,10 @@ function TabNavigator() {
             iconName = 'pulse-sharp';
           } else if (route.name === '3D Model') {
             iconName = 'planet-outline';
+          } else if (route.name === 'Landing') {
+            iconName = 'location-sharp';
+          } else if (route.name === 'Education') {
+            iconName = 'school-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -47,8 +54,16 @@ function TabNavigator() {
         component={DashboardScreen}
       />
       <Tab.Screen 
+        name="Landing" 
+        component={LandingSiteScreen}
+      />
+      <Tab.Screen 
         name="3D Model" 
         component={ModelViewerScreen}
+      />
+      <Tab.Screen 
+        name="Education" 
+        component={SpaceEducationScreen}
       />
     </Tab.Navigator>
   );
@@ -89,6 +104,13 @@ export default function App() {
           component={TimelineScreen}
           options={{
             headerTitle: 'Mission Timeline',
+          }}
+        />
+        <Stack.Screen 
+          name="ScienceAnalysis" 
+          component={ScienceAnalysisScreen}
+          options={{
+            headerTitle: 'Science Data Analysis',
           }}
         />
       </Stack.Navigator>

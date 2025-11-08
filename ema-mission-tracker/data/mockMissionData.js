@@ -9,6 +9,77 @@ let baseSpeed = 38500; // Base speed in km/h
 let baseTemp = 20; // Base temperature
 let baseBattery = 85; // Base battery level
 
+// Data transmission tracking
+let dataTransmitted = 75; // Starting at 75 MB
+const totalDataCapacity = 500; // 500 MB total
+
+// Activity log state
+let activityLogEntries = [];
+const activities = [
+  'Deploying Solar Panels',
+  'Analyzing Sample 01A',
+  'Calibrating Spectrometer',
+  'Imaging Surface Feature',
+  'Collecting Temperature Data',
+  'Adjusting Antenna Direction',
+  'Running System Diagnostics',
+  'Scanning for Water Ice',
+  'Measuring Magnetic Field',
+  'Processing Spectral Data',
+  'Transmitting Data Packet',
+  'Charging Battery Systems',
+  'Monitoring Thermal Systems',
+  'Analyzing Mineral Composition',
+  'Capturing High-Res Images'
+];
+
+/**
+ * Generates a new activity log entry
+ */
+const generateActivityLogEntry = () => {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  const activity = activities[Math.floor(Math.random() * activities.length)];
+  
+  return {
+    timestamp: now.toISOString(),
+    time: timeStr,
+    message: activity
+  };
+};
+
+/**
+ * Gets the current data transmission status
+ */
+export const getDataLinkStatus = () => {
+  // Increment data transmitted (slower rate during anomalies)
+  const increment = telemetryCounter % CONFIG.ANOMALY_FREQUENCY === 0 ? 0.5 : 2.5;
+  dataTransmitted = Math.min(totalDataCapacity, dataTransmitted + increment);
+  
+  return {
+    transmitted: Math.floor(dataTransmitted),
+    total: totalDataCapacity,
+    percentage: Math.floor((dataTransmitted / totalDataCapacity) * 100),
+    rate: increment * 2, // MB per update interval
+  };
+};
+
+/**
+ * Gets the activity log (last 10 entries)
+ */
+export const getActivityLog = () => {
+  // Add a new activity every 3 telemetry updates
+  if (telemetryCounter % 3 === 0) {
+    activityLogEntries.push(generateActivityLogEntry());
+    // Keep only last 10 entries
+    if (activityLogEntries.length > 10) {
+      activityLogEntries.shift();
+    }
+  }
+  
+  return [...activityLogEntries].reverse(); // Most recent first
+};
+
 /**
  * Generates mock telemetry data with realistic trends and periodic anomalies
  * Every ANOMALY_FREQUENCY calls, this will return anomalous data
@@ -87,7 +158,7 @@ export const MISSION_TIMELINE_DATA = [
     id: '5',
     date: 'August 2032',
     event: 'Lutetia Approach',
-    description: 'Begin final approach sequence to asteroid 21 Lutetia',
+    description: 'Begin final approach sequence to Asteroid 269 Lutetia',
   },
   {
     id: '6',

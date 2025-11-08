@@ -6,16 +6,20 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  StyleSheet,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import GlobalStyles, { colors } from '../styles/GlobalStyles';
-import { getMockTelemetry } from '../data/mockMissionData';
+import { getMockTelemetry, getDataLinkStatus, getActivityLog } from '../data/mockMissionData';
 import { getAIAnalysis } from '../api/MissionAI';
 import { CONFIG } from '../config/appConfig';
 import TelemetryChart from '../components/TelemetryChart';
 
-const DashboardScreen = () => {
+const DashboardScreen = ({ navigation }) => {
   const [telemetry, setTelemetry] = useState(null);
   const [telemetryHistory, setTelemetryHistory] = useState([]);
+  const [dataLink, setDataLink] = useState(null);
+  const [activityLog, setActivityLog] = useState([]);
   const [aiMode, setAiMode] = useState('status_update');
   const [aiResponse, setAiResponse] = useState(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
@@ -26,11 +30,15 @@ const DashboardScreen = () => {
     const initialData = getMockTelemetry();
     setTelemetry(initialData);
     setTelemetryHistory([initialData]);
+    setDataLink(getDataLinkStatus());
+    setActivityLog(getActivityLog());
 
     // Set up interval for continuous updates
     const interval = setInterval(() => {
       const newTelemetry = getMockTelemetry();
       setTelemetry(newTelemetry);
+      setDataLink(getDataLinkStatus());
+      setActivityLog(getActivityLog());
       
       setTelemetryHistory((prev) => {
         const updated = [...prev, newTelemetry];
@@ -267,8 +275,100 @@ const DashboardScreen = () => {
         {/* Interactive Telemetry Chart */}
         <TelemetryChart telemetryHistory={telemetryHistory} />
 
+        {/* Data Link Section */}
+        {dataLink && (
+          <View style={[GlobalStyles.card, { borderColor: colors.info }]}>
+            <View style={styles.dataLinkHeader}>
+              <Ionicons name="wifi" size={24} color={colors.info} />
+              <Text style={[GlobalStyles.subtitle, { marginTop: 0, marginLeft: 8 }]}>
+                Data Link Status
+              </Text>
+            </View>
+            
+            <View style={GlobalStyles.row}>
+              <Text style={GlobalStyles.label}>Data Transmitted</Text>
+              <Text style={GlobalStyles.value}>
+                {dataLink.transmitted} MB / {dataLink.total} MB
+              </Text>
+            </View>
+            
+            <View style={styles.progressBarContainer}>
+              <View 
+                style={[
+                  styles.progressBarFill, 
+                  { width: `${dataLink.percentage}%` }
+                ]} 
+              />
+            </View>
+            
+            <View style={GlobalStyles.row}>
+              <Text style={GlobalStyles.label}>Transfer Rate</Text>
+              <Text style={GlobalStyles.value}>{dataLink.rate.toFixed(1)} MB/s</Text>
+            </View>
+            
+            <View style={GlobalStyles.row}>
+              <Text style={GlobalStyles.label}>Progress</Text>
+              <Text style={[GlobalStyles.value, { color: colors.success }]}>
+                {dataLink.percentage}%
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* Activity Log Section */}
+        <View style={[GlobalStyles.card, { borderColor: colors.accent }]}>
+          <View style={styles.activityLogHeader}>
+            <Ionicons name="list-circle-outline" size={24} color={colors.accent} />
+            <Text style={[GlobalStyles.subtitle, { marginTop: 0, marginLeft: 8 }]}>
+              Live Activity Log
+            </Text>
+          </View>
+          
+          {activityLog.length === 0 ? (
+            <Text style={[GlobalStyles.bodyText, { fontStyle: 'italic', color: colors.textSecondary }]}>
+              Waiting for lander activities...
+            </Text>
+          ) : (
+            <View style={styles.activityLogContainer}>
+              {activityLog.map((entry, index) => (
+                <View key={`${entry.timestamp}-${index}`} style={styles.activityLogEntry}>
+                  <Text style={styles.activityTime}>{entry.time}:</Text>
+                  <Text style={styles.activityMessage}>{entry.message}</Text>
+                  <Ionicons 
+                    name="checkmark-circle" 
+                    size={16} 
+                    color={colors.success} 
+                    style={{ marginLeft: 'auto' }}
+                  />
+                </View>
+              ))}
+            </View>
+          )}
+          
+          <Text style={[GlobalStyles.label, { fontSize: 11, marginTop: 12, textAlign: 'center' }]}>
+            Updates every {CONFIG.TELEMETRY_INTERVAL_MS * 3 / 1000}s • Showing last 10 activities
+          </Text>
+        </View>
+
         {/* AI Analyst Hub */}
         <Text style={GlobalStyles.subtitle}>AI Mission Analyst</Text>
+
+        {/* Science Data Button - Featured */}
+        <TouchableOpacity
+          style={styles.scienceDataButton}
+          onPress={() => navigation.navigate('ScienceAnalysis')}
+        >
+          <View style={styles.scienceDataContent}>
+            <Ionicons name="telescope" size={28} color={colors.accent} />
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={styles.scienceDataTitle}>🔬 AI Science Analysis Available</Text>
+              <Text style={styles.scienceDataSubtitle}>
+                Analyze lander images and sensor data with AI
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={colors.accent} />
+          </View>
+        </TouchableOpacity>
 
         {/* AI Mode Selector */}
         <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
@@ -335,5 +435,76 @@ const DashboardScreen = () => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  dataLinkHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  progressBarContainer: {
+    height: 8,
+    backgroundColor: colors.background,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginVertical: 12,
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: colors.info,
+    borderRadius: 4,
+  },
+  activityLogHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  activityLogContainer: {
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    padding: 8,
+  },
+  activityLogEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.cardBorder,
+  },
+  activityTime: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.accent,
+    marginRight: 8,
+    minWidth: 50,
+  },
+  activityMessage: {
+    fontSize: 13,
+    color: colors.text,
+    flex: 1,
+  },
+  scienceDataButton: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: colors.accent,
+  },
+  scienceDataContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  scienceDataTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  scienceDataSubtitle: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+});
 
 export default DashboardScreen;
