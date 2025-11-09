@@ -75,7 +75,7 @@ const TimelineScreen = () => {
     <View style={GlobalStyles.container}>
       <Text style={GlobalStyles.title}>Mission Timeline</Text>
       <Text style={[GlobalStyles.bodyText, { marginBottom: 20 }]}>
-        EMA Mission to Asteroid 269 Lutetia
+        EMA Mission to Asteroid 269 Justitia
       </Text>
 
       <FlatList

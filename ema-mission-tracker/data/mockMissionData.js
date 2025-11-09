@@ -127,7 +127,7 @@ export const getMockTelemetry = () => {
 
 /**
  * Static mission timeline data - scientifically accurate milestones
- * for the EMA (Envisaged Mission to Asteroid) mission to 21 Lutetia
+ * for the EMA (Envisaged Mission to Asteroid) mission to Asteroid 269 Justitia
  */
 export const MISSION_TIMELINE_DATA = [
   {
@@ -157,14 +157,14 @@ export const MISSION_TIMELINE_DATA = [
   {
     id: '5',
     date: 'August 2032',
-    event: 'Lutetia Approach',
-    description: 'Begin final approach sequence to Asteroid 269 Lutetia',
+    event: 'Asteroid 269 Justitia Approach',
+    description: 'Begin final approach sequence to Asteroid 269 Justitia',
   },
   {
     id: '6',
     date: 'November 2032',
     event: 'Orbital Insertion',
-    description: 'EMA enters stable orbit around 21 Lutetia, begins scientific mission',
+    description: 'EMA enters stable orbit around Asteroid 269 Justitia, begins scientific mission',
   },
   {
     id: '7',

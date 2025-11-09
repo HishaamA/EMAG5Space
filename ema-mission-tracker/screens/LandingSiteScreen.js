@@ -256,7 +256,7 @@ const LandingSiteScreen = () => {
           <View style={{ flex: 1, marginLeft: 12 }}>
             <Text style={styles.headerTitle}>Landing Site Analyzer</Text>
             <Text style={styles.headerSubtitle}>
-              AI-powered risk/benefit analysis for asteroid Justitia landing mission
+              AI-powered risk/benefit analysis for Asteroid 269 Justitia landing mission
             </Text>
           </View>
         </View>

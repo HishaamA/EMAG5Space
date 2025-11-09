@@ -1,6 +1,6 @@
 # EMA Mission Control Dashboard
 
-A React Native + Expo application for monitoring the EMA (Envisaged Mission to Asteroid) spacecraft mission to Asteroid 269 Lutetia. Features real-time telemetry simulation, AI-powered analysis using Google's Gemini API, 3D model viewer, and mission timeline.
+A React Native + Expo application for monitoring the EMA (Envisaged Mission to Asteroid) spacecraft mission to Asteroid 269 Justitia. Features real-time telemetry simulation, AI-powered analysis using Google's Gemini API, 3D model viewer, and mission timeline.
 
 ## Features
 

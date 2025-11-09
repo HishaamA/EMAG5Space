@@ -1,6 +1,6 @@
 /**
  * Mock Science Data for AI Analysis Feature
- * Simulates data from the EMA lander on Asteroid 269 Lutetia
+ * Simulates data from the EMA lander on Asteroid 269 Justitia
  */
 
 export const MOCK_SURFACE_IMAGES = [

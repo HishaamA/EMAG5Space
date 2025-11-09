@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
+  Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import GlobalStyles, { colors } from '../styles/GlobalStyles';
@@ -20,7 +22,7 @@ const AIChatScreen = ({ route }) => {
     {
       id: '1',
       role: 'assistant',
-      content: "👋 Hello! I'm ARIA, your AI mission assistant for the Justitia Landing Mission. I can help answer questions about the mission, telemetry data, landing sites, or general space exploration topics. What would you like to know?",
+      content: "👋 Hello! I'm ARIA (Asteroid Research Intelligence Assistant), your advanced AI mission analyst for the Asteroid 269 Justitia Landing Mission.\n\nI can provide:\n• Real-time telemetry analysis and trend prediction\n• Landing site risk/benefit assessments\n• Resource extraction feasibility analysis\n• Scientific insights on asteroid composition\n• Mission planning recommendations\n\nWhat would you like to analyze?",
       timestamp: new Date().toISOString(),
     }
   ]);
@@ -28,12 +30,21 @@ const AIChatScreen = ({ route }) => {
   const [isTyping, setIsTyping] = useState(false);
   const scrollViewRef = useRef(null);
 
+  // Quick action prompts for advanced analyses
+  const quickActions = [
+    { icon: 'analytics', label: 'Analyze Trends', prompt: 'Analyze current telemetry trends and predict any potential issues in the next 24 hours' },
+    { icon: 'location', label: 'Best Landing Site', prompt: 'Compare all four landing sites and recommend the best option considering both safety and scientific value' },
+    { icon: 'flash', label: 'System Health', prompt: 'Provide a comprehensive health assessment of all spacecraft systems based on current telemetry' },
+    { icon: 'trophy', label: 'Mission Value', prompt: 'What are the most valuable resources we can extract from Asteroid 269 Justitia and what is their economic potential?' },
+  ];
+
   const suggestedQuestions = [
-    "What is Asteroid 269 Justitia?",
-    "How is our spacecraft doing?",
-    "Which landing site should we choose?",
-    "What can we mine from this asteroid?",
-    "Explain the mission timeline",
+    "Analyze current telemetry trends",
+    "Compare all landing sites - which is best?",
+    "What resources can we extract from Asteroid 269 Justitia?",
+    "Predict battery life based on current drain",
+    "What are the biggest mission risks?",
+    "Explain M-type asteroids and their value",
   ];
 
   useEffect(() => {
@@ -99,6 +110,14 @@ const AIChatScreen = ({ route }) => {
     setInputText(question);
   };
 
+  const handleQuickAction = (prompt) => {
+    setInputText(prompt);
+    // Auto-send the quick action
+    setTimeout(() => {
+      handleSendMessage();
+    }, 100);
+  };
+
   const handleClearChat = () => {
     setMessages([
       {
@@ -108,6 +127,34 @@ const AIChatScreen = ({ route }) => {
         timestamp: new Date().toISOString(),
       }
     ]);
+  };
+
+  const handleExportChat = async () => {
+    try {
+      // Create a formatted export of the conversation
+      const exportText = messages.map(msg => {
+        const time = new Date(msg.timestamp).toLocaleString();
+        const role = msg.role === 'user' ? 'USER' : 'ARIA';
+        return `[${time}] ${role}:\n${msg.content}\n`;
+      }).join('\n---\n\n');
+
+      const fullExport = `EMA Mission - ARIA Analysis Export
+Generated: ${new Date().toLocaleString()}
+Mission: Asteroid 269 Justitia Landing Mission
+========================================
+
+${exportText}
+
+========================================
+End of Analysis Report`;
+
+      await Share.share({
+        message: fullExport,
+        title: 'ARIA Mission Analysis Export',
+      });
+    } catch (error) {
+      Alert.alert('Export Failed', 'Unable to export chat history');
+    }
   };
 
   const renderMessage = (message) => {
@@ -170,12 +217,23 @@ const AIChatScreen = ({ route }) => {
           </View>
           <View>
             <Text style={styles.headerTitle}>ARIA</Text>
-            <Text style={styles.headerSubtitle}>Mission Assistant</Text>
+            <Text style={styles.headerSubtitle}>AI Mission Analyst</Text>
+            {currentTelemetry && (
+              <View style={styles.statusBadge}>
+                <View style={styles.statusDot} />
+                <Text style={styles.statusText}>Live Data Connected</Text>
+              </View>
+            )}
           </View>
         </View>
-        <TouchableOpacity onPress={handleClearChat} style={styles.clearButton}>
-          <Ionicons name="trash-outline" size={20} color={colors.textSecondary} />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={handleExportChat} style={styles.headerButton}>
+            <Ionicons name="download-outline" size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleClearChat} style={styles.headerButton}>
+            <Ionicons name="trash-outline" size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Messages */}
@@ -194,8 +252,27 @@ const AIChatScreen = ({ route }) => {
               <Ionicons name="chatbubble-ellipses" size={20} color={colors.primary} />
             </View>
             <View style={styles.typingBubble}>
-              <Text style={styles.typingText}>ARIA is thinking</Text>
+              <Text style={styles.typingText}>ARIA is analyzing</Text>
               <ActivityIndicator size="small" color={colors.primary} style={{ marginLeft: 8 }} />
+            </View>
+          </View>
+        )}
+
+        {/* Quick Actions (show at start) */}
+        {messages.length === 1 && (
+          <View style={styles.quickActionsContainer}>
+            <Text style={styles.quickActionsTitle}>⚡ Quick Analysis</Text>
+            <View style={styles.quickActionsGrid}>
+              {quickActions.map((action, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.quickActionButton}
+                  onPress={() => handleQuickAction(action.prompt)}
+                >
+                  <Ionicons name={action.icon} size={24} color={colors.primary} />
+                  <Text style={styles.quickActionLabel}>{action.label}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         )}
@@ -203,7 +280,7 @@ const AIChatScreen = ({ route }) => {
         {/* Suggested Questions (show only at start) */}
         {messages.length === 1 && (
           <View style={styles.suggestionsContainer}>
-            <Text style={styles.suggestionsTitle}>Try asking:</Text>
+            <Text style={styles.suggestionsTitle}>💬 Or ask me anything:</Text>
             {suggestedQuestions.map((question, index) => (
               <TouchableOpacity
                 key={index}
@@ -286,7 +363,33 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSecondary,
   },
-  clearButton: {
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    backgroundColor: colors.primary + '20',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+    marginRight: 4,
+  },
+  statusText: {
+    fontSize: 10,
+    color: colors.primary,
+    fontWeight: '600',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  headerButton: {
     padding: 8,
   },
   messagesContainer: {
@@ -381,6 +484,39 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textSecondary,
     fontStyle: 'italic',
+  },
+  quickActionsContainer: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  quickActionsTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    marginBottom: 12,
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  quickActionButton: {
+    flexBasis: '48%',
+    backgroundColor: colors.card,
+    borderWidth: 2,
+    borderColor: colors.primary + '40',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 80,
+  },
+  quickActionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.text,
+    marginTop: 8,
+    textAlign: 'center',
   },
   suggestionsContainer: {
     marginTop: 8,

@@ -1,5 +1,5 @@
 /**
- * Mock Landing Site Data for Justitia Landing Mission
+ * Mock Landing Site Data for Asteroid 269 Justitia Landing Mission
  * Asteroid 269 Justitia is a large M-type asteroid in the main asteroid belt
  */
 

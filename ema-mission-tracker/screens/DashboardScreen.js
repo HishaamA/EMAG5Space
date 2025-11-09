@@ -241,9 +241,90 @@ const DashboardScreen = ({ navigation }) => {
       <View style={GlobalStyles.container}>
         <Text style={GlobalStyles.title}>EMA: Real-Time Dashboard</Text>
 
+        {/* AI Analyst Hub */}
+        <Text style={GlobalStyles.subtitle}>AI Mission Analyst</Text>
+
+        {/* Science Data Button - Featured */}
+        <TouchableOpacity
+          style={styles.scienceDataButton}
+          onPress={() => navigation.navigate('ScienceAnalysis')}
+        >
+          <View style={styles.scienceDataContent}>
+            <Ionicons name="telescope" size={28} color={colors.accent} />
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={styles.scienceDataTitle}>🔬 AI Science Analysis Available</Text>
+              <Text style={styles.scienceDataSubtitle}>
+                Analyze lander images and sensor data with AI
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={colors.accent} />
+          </View>
+        </TouchableOpacity>
+
+        {/* AI Mode Selector */}
+        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+          <TouchableOpacity
+            style={[
+              GlobalStyles.buttonSecondary,
+              { flex: 1, minWidth: 100 },
+              aiMode === 'status_update' && { backgroundColor: colors.primary, borderColor: colors.primary }
+            ]}
+            onPress={() => setAiMode('status_update')}
+          >
+            <Text style={GlobalStyles.buttonText}>Status</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              GlobalStyles.buttonSecondary,
+              { flex: 1, minWidth: 100 },
+              aiMode === 'anomaly_detection' && { backgroundColor: colors.primary, borderColor: colors.primary }
+            ]}
+            onPress={() => setAiMode('anomaly_detection')}
+          >
+            <Text style={GlobalStyles.buttonText}>Anomaly</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              GlobalStyles.buttonSecondary,
+              { flex: 1, minWidth: 100 },
+              aiMode === 'risk_assessment' && { backgroundColor: colors.primary, borderColor: colors.primary }
+            ]}
+            onPress={() => setAiMode('risk_assessment')}
+          >
+            <Text style={GlobalStyles.buttonText}>Risk</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Run Analysis Button */}
+        <TouchableOpacity
+          style={[GlobalStyles.button, { marginBottom: 16 }]}
+          onPress={handleRunAnalysis}
+          disabled={isLoadingAI}
+        >
+          <Text style={GlobalStyles.buttonText}>
+            {isLoadingAI ? 'Analyzing...' : 'Run AI Analysis'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Loading Indicator */}
+        {isLoadingAI && (
+          <View style={{ alignItems: 'center', marginBottom: 16 }}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={[GlobalStyles.label, { marginTop: 8 }]}>
+              Contacting ARIA...
+            </Text>
+          </View>
+        )}
+
+        {/* AI Response Display */}
+        {renderAIResponse()}
+
         {/* Live Telemetry Display */}
+        <Text style={GlobalStyles.subtitle}>Live Telemetry</Text>
         <View style={[GlobalStyles.card, isWarning && { borderColor: colors.warning }]}>
-          <Text style={[GlobalStyles.subtitle, { marginTop: 0 }]}>Live Telemetry</Text>
+          <Text style={[GlobalStyles.subtitle, { marginTop: 0 }]}>Current Status</Text>
           
           {renderTelemetryRow('Status', telemetry.status_flag, isWarning)}
           {renderTelemetryRow('Speed', `${telemetry.speed_kph.toLocaleString()} km/h`)}
@@ -349,86 +430,6 @@ const DashboardScreen = ({ navigation }) => {
             Updates every {CONFIG.TELEMETRY_INTERVAL_MS * 3 / 1000}s • Showing last 10 activities
           </Text>
         </View>
-
-        {/* AI Analyst Hub */}
-        <Text style={GlobalStyles.subtitle}>AI Mission Analyst</Text>
-
-        {/* Science Data Button - Featured */}
-        <TouchableOpacity
-          style={styles.scienceDataButton}
-          onPress={() => navigation.navigate('ScienceAnalysis')}
-        >
-          <View style={styles.scienceDataContent}>
-            <Ionicons name="telescope" size={28} color={colors.accent} />
-            <View style={{ flex: 1, marginLeft: 12 }}>
-              <Text style={styles.scienceDataTitle}>🔬 AI Science Analysis Available</Text>
-              <Text style={styles.scienceDataSubtitle}>
-                Analyze lander images and sensor data with AI
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color={colors.accent} />
-          </View>
-        </TouchableOpacity>
-
-        {/* AI Mode Selector */}
-        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-          <TouchableOpacity
-            style={[
-              GlobalStyles.buttonSecondary,
-              { flex: 1, minWidth: 100 },
-              aiMode === 'status_update' && { backgroundColor: colors.primary, borderColor: colors.primary }
-            ]}
-            onPress={() => setAiMode('status_update')}
-          >
-            <Text style={GlobalStyles.buttonText}>Status</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              GlobalStyles.buttonSecondary,
-              { flex: 1, minWidth: 100 },
-              aiMode === 'anomaly_detection' && { backgroundColor: colors.primary, borderColor: colors.primary }
-            ]}
-            onPress={() => setAiMode('anomaly_detection')}
-          >
-            <Text style={GlobalStyles.buttonText}>Anomaly</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              GlobalStyles.buttonSecondary,
-              { flex: 1, minWidth: 100 },
-              aiMode === 'risk_assessment' && { backgroundColor: colors.primary, borderColor: colors.primary }
-            ]}
-            onPress={() => setAiMode('risk_assessment')}
-          >
-            <Text style={GlobalStyles.buttonText}>Risk</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Run Analysis Button */}
-        <TouchableOpacity
-          style={[GlobalStyles.button, { marginBottom: 16 }]}
-          onPress={handleRunAnalysis}
-          disabled={isLoadingAI}
-        >
-          <Text style={GlobalStyles.buttonText}>
-            {isLoadingAI ? 'Analyzing...' : 'Run AI Analysis'}
-          </Text>
-        </TouchableOpacity>
-
-        {/* Loading Indicator */}
-        {isLoadingAI && (
-          <View style={{ alignItems: 'center', marginBottom: 16 }}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={[GlobalStyles.label, { marginTop: 8 }]}>
-              Contacting Gemini AI...
-            </Text>
-          </View>
-        )}
-
-        {/* AI Response Display */}
-        {renderAIResponse()}
 
         <View style={{ height: 40 }} />
       </View>
