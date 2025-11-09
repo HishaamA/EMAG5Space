@@ -86,7 +86,7 @@ function TabNavigator({ navigation }) {
         style={styles.floatingChatButton}
         onPress={() => navigation.navigate('AIChat')}
       >
-        <Ionicons name="chatbubble-ellipses" size={28} color={colors.text} />
+        <Ionicons name="sparkles" size={28} color={colors.text} />
       </TouchableOpacity>
     </View>
     </>
@@ -153,10 +153,7 @@ const styles = StyleSheet.create({
   floatingButtonContainer: {
     position: 'absolute',
     bottom: 50,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    right: 24,
     pointerEvents: 'box-none',
   },
   floatingChatButton: {
@@ -171,5 +168,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.5,
     shadowRadius: 10,
+    opacity: 0.80,
   },
 });

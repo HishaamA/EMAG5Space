@@ -362,7 +362,7 @@ const DashboardScreen = ({ navigation }) => {
 
         {/* Data Link Section */}
         {dataLink && (
-          <View style={[GlobalStyles.card, { borderColor: colors.info }]}>
+          <View style={GlobalStyles.card}>
             <View style={styles.dataLinkHeader}>
               <Ionicons name="wifi" size={24} color={colors.info} />
               <Text style={[GlobalStyles.subtitle, { marginTop: 0, marginLeft: 8 }]}>
@@ -401,7 +401,7 @@ const DashboardScreen = ({ navigation }) => {
         )}
 
         {/* Activity Log Section */}
-        <View style={[GlobalStyles.card, { borderColor: colors.accent }]}>
+        <View style={GlobalStyles.card}>
           <View style={styles.activityLogHeader}>
             <Ionicons name="list-circle-outline" size={24} color={colors.accent} />
             <Text style={[GlobalStyles.subtitle, { marginTop: 0, marginLeft: 8 }]}>
