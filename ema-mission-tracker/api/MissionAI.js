@@ -110,6 +110,44 @@ As a mission engineer, provide a comprehensive landing site analysis covering:
 
 Keep your analysis professional and actionable (2-3 paragraphs). Focus on practical mission planning considerations.`;
 
+    case 'mission_chat':
+      // Build context-aware chat prompt
+      const missionContext = telemetry ? `
+Current Mission Status (Live Telemetry):
+- Spacecraft Status: ${telemetry.status_flag || 'Nominal'}
+- Distance from Earth: ${telemetry.distance_from_earth_km ? telemetry.distance_from_earth_km.toLocaleString() + ' km' : 'N/A'}
+- Speed: ${telemetry.speed_kph ? telemetry.speed_kph.toLocaleString() + ' km/h' : 'N/A'}
+- Battery Level: ${telemetry.battery_percent || 'N/A'}%
+- System Temperature: ${telemetry.system_temp_c || 'N/A'}°C
+- Signal Strength: ${telemetry.signal_strength || 'N/A'}` : '';
+
+      const conversationHistory = history && history.length > 0 
+        ? history.map(msg => `${msg.role}: ${msg.content}`).join('\n')
+        : '';
+
+      return `You are ARIA (Asteroid Research Intelligence Assistant), an advanced AI assistant for the EMA (Envisaged Mission to Asteroid) mission to Asteroid 269 Justitia.
+
+Your role: Provide helpful, accurate, and conversational support to mission control personnel and scientists. Answer questions about the mission, asteroid characteristics, telemetry data, landing sites, and space exploration.
+
+Mission Overview:
+- Target: Asteroid 269 Justitia (M-type asteroid in main belt)
+- Mission: Landing mission with scientific exploration and resource assessment
+- Current Phase: En route / Orbital operations
+- Landing Sites: 4 potential sites (Alpha, Beta, Gamma, Delta) with varying difficulty and scientific value
+${missionContext}
+
+Your personality:
+- Professional but friendly and approachable
+- Enthusiastic about space exploration
+- Clear and concise in explanations
+- Use technical terms when appropriate but explain them
+- Reference actual mission data when answering questions
+
+${conversationHistory ? `Previous conversation:\n${conversationHistory}\n` : ''}
+User question: ${telemetry.userMessage}
+
+Respond naturally and helpfully. If the user asks about current telemetry, reference the live data above. Keep responses concise (2-3 paragraphs max) unless asked for detailed information.`;
+
     default:
       return 'Invalid prompt type';
   }
@@ -164,8 +202,8 @@ export const getAIAnalysis = async (promptType, telemetryData, telemetryHistory 
     // Parse based on prompt type
     if (promptType === 'status_update') {
       return { responseText: responseText.trim() };
-    } else if (promptType === 'image_analysis' || promptType === 'data_analysis' || promptType === 'landing_site_analysis') {
-      // Return plain text analysis for science data and landing sites
+    } else if (promptType === 'image_analysis' || promptType === 'data_analysis' || promptType === 'landing_site_analysis' || promptType === 'mission_chat') {
+      // Return plain text analysis for science data, landing sites, and chat
       return { responseText: responseText.trim() };
     } else if (promptType === 'anomaly_detection' || promptType === 'risk_assessment') {
       // Try to parse JSON from the response

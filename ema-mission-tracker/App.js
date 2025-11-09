@@ -13,6 +13,7 @@ import TimelineScreen from './screens/TimelineScreen';
 import SpaceEducationScreen from './screens/SpaceEducationScreen';
 import ScienceAnalysisScreen from './screens/ScienceAnalysisScreen';
 import LandingSiteScreen from './screens/LandingSiteScreen';
+import AIChatScreen from './screens/AIChatScreen';
 
 // Import styles
 import { colors } from './styles/GlobalStyles';
@@ -111,6 +112,13 @@ export default function App() {
           component={ScienceAnalysisScreen}
           options={{
             headerTitle: 'Science Data Analysis',
+          }}
+        />
+        <Stack.Screen 
+          name="AIChat" 
+          component={AIChatScreen}
+          options={{
+            headerTitle: 'ARIA Assistant',
           }}
         />
       </Stack.Navigator>

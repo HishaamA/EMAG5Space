@@ -432,6 +432,14 @@ const DashboardScreen = ({ navigation }) => {
 
         <View style={{ height: 40 }} />
       </View>
+
+      {/* Floating Chat Button */}
+      <TouchableOpacity 
+        style={styles.floatingChatButton}
+        onPress={() => navigation.navigate('AIChat', { currentTelemetry: telemetry })}
+      >
+        <Ionicons name="chatbubble-ellipses" size={28} color={colors.text} />
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -504,6 +512,22 @@ const styles = StyleSheet.create({
   scienceDataSubtitle: {
     fontSize: 12,
     color: colors.textSecondary,
+  },
+  floatingChatButton: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
 });
 
