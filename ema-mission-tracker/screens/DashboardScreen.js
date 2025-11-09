@@ -14,6 +14,7 @@ import { getMockTelemetry, getDataLinkStatus, getActivityLog } from '../data/moc
 import { getAIAnalysis } from '../api/MissionAI';
 import { CONFIG } from '../config/appConfig';
 import TelemetryChart from '../components/TelemetryChart';
+import MissionTracker from '../components/MissionTracker';
 
 const DashboardScreen = ({ navigation }) => {
   const [telemetry, setTelemetry] = useState(null);
@@ -240,6 +241,9 @@ const DashboardScreen = ({ navigation }) => {
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={GlobalStyles.container}>
         <Text style={GlobalStyles.title}>EMA: Real-Time Dashboard</Text>
+
+        {/* Mission Progress Tracker */}
+        <MissionTracker distance_from_earth_km={telemetry.distance_from_earth_km} />
 
         {/* AI Analyst Hub */}
         <Text style={GlobalStyles.subtitle}>AI Mission Analyst</Text>
