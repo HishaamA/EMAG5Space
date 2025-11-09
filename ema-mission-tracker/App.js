@@ -57,11 +57,22 @@ function TabNavigator() {
       <Tab.Screen 
         name="Landing" 
         component={LandingSiteScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="location" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="3D Model" 
-        component={ModelViewerScreen}
-      />
+              <Tab.Screen 
+          name="Model" 
+          component={ModelViewerScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="cube" size={size} color={color} />
+            ),
+            title: '3D Model'
+          }}
+        />
       <Tab.Screen 
         name="Education" 
         component={SpaceEducationScreen}
