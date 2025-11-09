@@ -146,15 +146,15 @@ const DashboardScreen = ({ navigation }) => {
                 {aiResponse.risk_level}
               </Text>
             </View>
-            <View style={GlobalStyles.row}>
-              <Text style={GlobalStyles.bodyText}>Primary Concern:</Text>
-              <Text style={[GlobalStyles.value, { fontSize: 14, flex: 1, textAlign: 'right' }]}>
+            <View style={{ marginTop: 12 }}>
+              <Text style={[GlobalStyles.bodyText, { marginBottom: 4 }]}>Primary Concern:</Text>
+              <Text style={GlobalStyles.value}>
                 {aiResponse.primary_concern}
               </Text>
             </View>
             {aiResponse.time_to_critical !== 'N/A' && (
-              <View style={GlobalStyles.row}>
-                <Text style={GlobalStyles.bodyText}>Time to Critical:</Text>
+              <View style={{ marginTop: 12 }}>
+                <Text style={[GlobalStyles.bodyText, { marginBottom: 4 }]}>Time to Critical:</Text>
                 <Text style={[GlobalStyles.value, { color: colors.warning }]}>
                   {aiResponse.time_to_critical}
                 </Text>
@@ -437,14 +437,6 @@ const DashboardScreen = ({ navigation }) => {
 
         <View style={{ height: 40 }} />
       </View>
-
-      {/* Floating Chat Button */}
-      <TouchableOpacity 
-        style={styles.floatingChatButton}
-        onPress={() => navigation.navigate('AIChat', { currentTelemetry: telemetry })}
-      >
-        <Ionicons name="chatbubble-ellipses" size={28} color={colors.text} />
-      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -517,22 +509,6 @@ const styles = StyleSheet.create({
   scienceDataSubtitle: {
     fontSize: 12,
     color: colors.textSecondary,
-  },
-  floatingChatButton: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
   },
 });
 

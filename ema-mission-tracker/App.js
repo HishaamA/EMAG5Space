@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View, StyleSheet } from 'react-native';
 
 // Import screens
 import DashboardScreen from './screens/DashboardScreen';
@@ -21,9 +21,10 @@ import { colors } from './styles/GlobalStyles';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function TabNavigator() {
+function TabNavigator({ navigation }) {
   return (
-    <Tab.Navigator
+    <>
+      <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -78,6 +79,17 @@ function TabNavigator() {
         component={SpaceEducationScreen}
       />
     </Tab.Navigator>
+    
+    {/* Floating Chat Button */}
+    <View style={styles.floatingButtonContainer}>
+      <TouchableOpacity
+        style={styles.floatingChatButton}
+        onPress={() => navigation.navigate('AIChat')}
+      >
+        <Ionicons name="chatbubble-ellipses" size={28} color={colors.text} />
+      </TouchableOpacity>
+    </View>
+    </>
   );
 }
 
@@ -136,3 +148,28 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  floatingButtonContainer: {
+    position: 'absolute',
+    bottom: 50,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'box-none',
+  },
+  floatingChatButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
+});
