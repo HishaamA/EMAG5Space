@@ -1,8 +1,9 @@
-import { GOOGLE_API_KEY } from '@env';
+import { OPENROUTER_API_KEY } from '@env';
 import { CONFIG } from '../config/appConfig';
 
-// Gemini API endpoint
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_API_KEY}`;
+// OpenRouter API endpoint
+const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const MODEL = 'google/gemini-2.5-flash-lite';
 
 /**
  * Builds the appropriate prompt based on the AI mode
@@ -226,18 +227,23 @@ export const getAIAnalysis = async (promptType, telemetryData, telemetryHistory 
     // Build the prompt
     const prompt = buildPrompt(promptType, telemetryData, telemetryHistory);
 
-    // Make the API call
+    // Make the API call to OpenRouter
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://github.com/HishaamA/g5space',
+        'X-Title': 'EMA Mission Tracker',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }]
+        model: MODEL,
+        messages: [{
+          role: 'user',
+          content: prompt
+        }],
+        temperature: 0.7,
+        max_tokens: 2048,
       }),
     });
 
@@ -248,8 +254,8 @@ export const getAIAnalysis = async (promptType, telemetryData, telemetryHistory 
 
     const json = await response.json();
     
-    // Extract the AI's response text
-    const responseText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+    // Extract the AI's response text from OpenRouter format
+    const responseText = json.choices?.[0]?.message?.content;
     
     if (!responseText) {
       throw new Error('Invalid API response structure');
